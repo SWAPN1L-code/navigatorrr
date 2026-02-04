@@ -1,4 +1,4 @@
-# Navigator 🧭
+# Navigator
 
 > Better navigation for long chats on ChatGPT, Claude + Gemini
 
@@ -8,26 +8,26 @@
 
 ---
 
-## ✨ Features
+## Features
 
 ![Features Overview](assets/features.png)
 
-- **🎯 Smart Outline Panel** — View all your prompts and AI responses in a clean, collapsible sidebar
-- **📑 Heading Navigation** — Jump directly to sub-headings within long AI responses
-- **🔍 Instant Search** — Filter through your entire conversation with real-time search
-- **⭐ Starred Messages** — Bookmark important prompts or responses for quick access
-- **🎨 Theme Support** — Auto, Light, and Dark modes that adapt to your preference
-- **⌨️ Keyboard Shortcuts** — Navigate with `Cmd/Ctrl + .` and arrow keys
-- **🖱️ Draggable Toggle** — Position the toggle button anywhere on your screen
-- **📋 Quick Copy** — Right-click any item to copy its content to clipboard
+- **Smart Outline Panel** — View all your prompts and AI responses in a clean, collapsible sidebar
+- **Heading Navigation** — Jump directly to sub-headings within long AI responses
+- **Instant Search** — Filter through your entire conversation with real-time search
+- **Starred Messages** — Bookmark important prompts or responses for quick access
+- **Theme Support** — Auto, Light, and Dark modes that adapt to your preference
+- **Keyboard Shortcuts** — Navigate with `Cmd/Ctrl + .` and arrow keys
+- **Draggable Toggle** — Position the toggle button anywhere on your screen
+- **Quick Copy** — Right-click any item to copy its content to clipboard
 
-## 🚀 Demo
+## Demo
 
 ![Navigator Demo](assets/demo.gif)
 
 ---
 
-## 🔧 Installation
+## Installation
 
 ### Chrome / Brave / Edge (Manual Install)
 
@@ -57,7 +57,7 @@
 
 ---
 
-## ⌨️ Keyboard Shortcuts
+## Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
@@ -70,7 +70,7 @@
 
 ---
 
-## 🎯 View Modes
+## View Modes
 
 | Mode | Description |
 |------|-------------|
@@ -80,7 +80,7 @@
 
 ---
 
-## 🔨 The Problem I Faced & How I Solved It
+## The Problem I Faced & How I Solved It
 
 ### The Challenge
 
@@ -107,11 +107,11 @@ The key breakthrough came when I realized I could:
 
 The result is a clean, unobtrusive panel that appears on the side of your screen. Click on any item to jump directly to it. Star important messages. Search through everything. Navigate with your keyboard.
 
-What used to take minutes of frustrating scrolling now takes seconds. 🚀
+What used to take minutes of frustrating scrolling now takes seconds.
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 navigator/
@@ -131,13 +131,13 @@ navigator/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](contributing.md) for details on how to get started.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Thanks to all the developers working on AI assistants
 - Built with vanilla JavaScript for maximum compatibility
