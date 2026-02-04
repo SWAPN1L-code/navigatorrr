@@ -6,7 +6,7 @@
   const PROVIDERS = {
     claude: {
       isMatch: () => window.location.hostname.includes('claude'),
-      scrollContainerSelector: 'main div[class*="overflow-y-auto"]',
+      scrollContainerSelector: 'html', // Default to root, let findScrollableAncestor refine it
       getTurns: (container) => {
         const turns = [];
         const assistantSelectors = [
@@ -50,28 +50,82 @@
     },
     chatgpt: {
       isMatch: () => window.location.hostname.includes('chatgpt') || window.location.hostname.includes('openai'),
-      scrollContainerSelector: 'main div[class*="overflow-y-auto"]',
+      scrollContainerSelector: 'html', // Use root and let finding logic refine it
       getTurns: (container) => {
-        const articles = Array.from(container.querySelectorAll('article[data-turn]'));
-        return articles.map(article => {
-          const role = article.dataset.turn;
-          let text = '';
+        const turns = [];
+
+        // Strategy A: Explicit Conversation Turns (Newer)
+        let wrappers = Array.from(container.querySelectorAll('[data-testid*="conversation-turn"]'));
+
+        // Strategy B: Data Attributes (Older)
+        if (wrappers.length === 0) {
+          const explicitMessages = container.querySelectorAll('[data-message-author-role]');
+          if (explicitMessages.length > 0) {
+            // Return early with the previous logic if this attribute exists
+            const extracted = [];
+            explicitMessages.forEach(msg => {
+              const role = msg.getAttribute('data-message-author-role');
+              const particle = msg.closest('article') || msg.closest('div[class*="group"]') || msg.parentElement;
+              if (extracted.some(t => t.element === particle)) return;
+
+              let text = msg.innerText || '';
+              let headings = [];
+              if (role === 'assistant') {
+                headings = Array.from(msg.querySelectorAll('h1, h2, h3, h4')).map(h => ({
+                  innerText: h.innerText, element: h, tagName: h.tagName
+                }));
+              }
+              extracted.push({ role, element: particle || msg, text, headings });
+            });
+            return extracted;
+          }
+        }
+
+        // Strategy C: 'div.group' Fallback (Common in Tailwind apps)
+        if (wrappers.length === 0) {
+          wrappers = Array.from(container.querySelectorAll('div.group'));
+        }
+
+        wrappers.forEach(wrapper => {
+          // Check if this wrapper actually looks like a message
+          // User messages often have specific icons or alignment, but simpler is to check for 'markdown' class for AI
+
+          const aiContent = wrapper.querySelector('.markdown') || wrapper.querySelector('.prose'); // .prose is sometimes used
+          const userContent = !aiContent ? (wrapper.innerText || '') : ''; // Fallback for user
+
+          // Refine User Detection:
+          // User messages in ChatGPT often don't have a specific class, but they lack the .markdown/.prose container.
+          // They might be just text nodes or simple divs. 
+          // We can look for the "You" label or "User" avatar, but that's localized and brittle.
+          // Robust heuristic: If it has .markdown, it's AI. If it's a sibling of an AI node, it's user.
+
+          // Let's try to find an explicit role indicator
+          let role = 'user';
+          let formattedText = userContent;
           let headings = [];
 
-          if (role === 'user') {
-            const textEl = article.querySelector('[data-message-author-role="user"]');
-            text = textEl ? textEl.innerText : '';
+          if (aiContent) {
+            role = 'assistant';
+            formattedText = aiContent.innerText || '';
+            headings = Array.from(aiContent.querySelectorAll('h1, h2, h3, h4')).map(h => ({
+              innerText: h.innerText, element: h, tagName: h.tagName
+            }));
           } else {
-            const contentEl = article.querySelector('[data-message-author-role="assistant"]');
-            if (contentEl) {
-              text = contentEl.innerText || '';
-              headings = Array.from(contentEl.querySelectorAll('h1, h2, h3, h4')).map(h => ({
-                innerText: h.innerText, element: h, tagName: h.tagName
-              }));
-            }
+            // Verify it has some text content to be a user message
+            if (!wrapper.innerText || wrapper.innerText.length < 2) return;
+            // Exclude system messages / buttons
+            if (wrapper.querySelector('button') && wrapper.innerText.length < 20) return;
           }
-          return { role, element: article, text, headings };
+
+          turns.push({
+            role: role,
+            element: wrapper,
+            text: formattedText,
+            headings: headings
+          });
         });
+
+        return turns;
       }
     },
     gemini: {
